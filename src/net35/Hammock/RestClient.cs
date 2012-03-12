@@ -2582,7 +2582,13 @@ namespace Hammock
             IDeserializer deserializer;
             if (ShouldDeserializeEntityBody(request, response, out deserializer))
             {
-                response.ContentEntity = deserializer.Deserialize<T>(response);
+                try
+                {
+                    response.ContentEntity = deserializer.Deserialize<T>(response);
+                }
+                catch (Exception)
+                {
+                }
             }
         }
 
