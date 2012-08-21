@@ -92,6 +92,11 @@ namespace Hammock.Silverlight.Compat
             var buffer = new byte[8192];
             var ms = new MemoryStream();
 
+            // Modified by gjulianm. Don't ask. I don't understand it either, but buffer can be nulll.
+            //  Being out of memory is the only reason I could think of.
+            if (buffer == null)
+                throw new OutOfMemoryException("Could not allocate memory for buffer.");
+
             int read;
             while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
             {
