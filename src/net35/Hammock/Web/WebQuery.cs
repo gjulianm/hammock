@@ -19,6 +19,11 @@ using System.IO.IsolatedStorage;
 #endif
 #endif
 
+#if METRO
+using Windows.Storage;
+using System.Threading.Tasks;
+#endif
+
 #if SILVERLIGHT && !WindowsPhone
 using System.Windows.Browser;
 using System.Net.Browser;
@@ -464,18 +469,16 @@ namespace Hammock.Web
             }
             request.AllowAutoRedirect = FollowRedirects;
 #endif
-
             SetUserAgent(request);
-
+#if !METRO
             if (DecompressionMethods.HasValue)
             {
                 var decompressionMethods = DecompressionMethods.Value;
-
 #if !SILVERLIGHT && !WindowsPhone
                 request.AutomaticDecompression = decompressionMethods;
 #else
 
-#if !WindowsPhone && !METRO
+#if !WindowsPhone
                 if (HasElevatedPermissions)
                 {
 #endif
@@ -512,6 +515,8 @@ namespace Hammock.Web
 #endif
             }
 #endif
+#endif
+
 #if !SILVERLIGHT && !PORTABLE
             if (RequestTimeout.HasValue)
             {
@@ -1082,7 +1087,7 @@ namespace Hammock.Web
             }
 
             var version = request is HttpWebRequest ?
-#if SILVERLIGHT
+#if SILVERLIGHT || METRO
                 "HTTP/v1.1" :
 #else
                 string.Concat("HTTP/", ((HttpWebRequest)request).ProtocolVersion) :
@@ -1239,7 +1244,12 @@ namespace Hammock.Web
             return dataBytes.Length;
         }
 
+
+#if !METRO
         private long WriteMultiPartImpl(bool write, IEnumerable<HttpPostParameter> parameters, string boundary, Encoding encoding, Stream requestStream)
+#else
+        private async Task<long> WriteMultiPartImpl(bool write, IEnumerable<HttpPostParameter> parameters, string boundary, Encoding encoding, Stream requestStream)
+#endif  
         {
             Stream fs = null;
             var header = string.Format("--{0}", boundary);
@@ -1277,15 +1287,22 @@ namespace Hammock.Web
                             }
 #endif
 
-#if !SILVERLIGHT && !PORTABLE
+#if !SILVERLIGHT && !METRO
                             fs = parameter.FileStream ?? new FileStream(parameter.FilePath, FileMode.Open, FileAccess.Read);
 #else
                             if (parameter.FileStream == null)
                             {
+#if METRO
+                                var store = ApplicationData.Current.LocalFolder;
+                                var stream = await store.OpenStreamForReadAsync(parameter.FilePath);
+                                parameter.FileStream = stream;
+#else
                                 var store = IsolatedStorageFile.GetUserStoreForApplication();
                                 var stream = store.OpenFile(parameter.FilePath, FileMode.Open, FileAccess.Read);
                                 parameter.FileStream = stream;
+                                    #endif
                             }
+
 
                             fs = parameter.FileStream; // <-- WP7 requires a stream
 #endif
