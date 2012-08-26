@@ -5,7 +5,7 @@ using Hammock.Extensions;
 
 namespace Hammock.Retries
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class RetryPolicy

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Hammock.Web;
 
-#if SILVERLIGHT
+#if SILVERLIGHT || PORTABLE
 using Hammock.Silverlight.Compat;
 #else
 using System.Collections.Specialized;

@@ -3,12 +3,12 @@ using System.Runtime.Serialization;
 
 namespace Hammock.Tasks
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public enum RateLimitType
     {
-#if !SILVERLIGHT && !Smartphone && !ClientProfiles && !NET20 && !MonoTouch && !NETCF
+#if !SILVERLIGHT && !PORTABLE && !Smartphone && !ClientProfiles && !NET20 && !MonoTouch && !NETCF
         [EnumMember] ByPercent,
         [EnumMember] ByPredicate
 #else

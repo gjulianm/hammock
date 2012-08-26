@@ -402,11 +402,16 @@ namespace Hammock.Serialization
                 return;
             }
 
+#if !METRO
             var properties = item.GetProperties(
                 BindingFlags.Public | BindingFlags.Instance
                 );
+#else
+            var properties = item.GetTypeInfo().DeclaredProperties
+                .Where(x => x.SetMethod.IsPublic && !x.SetMethod.IsStatic);
+#endif
 
-            _cache.Add(item, properties);
+            _cache.Add(item, properties.ToArray());
         }
 
         internal static void SerializeItem(StringBuilder sb, object item)

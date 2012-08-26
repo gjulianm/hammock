@@ -4,7 +4,7 @@ namespace Hammock.Tasks
 {
 
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class TaskOptions<T> : TaskOptions, ITaskOptions<T>
@@ -33,7 +33,7 @@ namespace Hammock.Tasks
         }
     }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class TaskOptions : ITaskOptions

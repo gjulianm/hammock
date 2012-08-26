@@ -12,9 +12,11 @@ using Hammock.Extensions;
 using Hammock.Validation;
 using Hammock.Web.Mocks;
 
-#if SILVERLIGHT
+#if SILVERLIGHT || PORTABLE
 using Hammock.Silverlight.Compat;
+#if SILVERLIGHT
 using System.IO.IsolatedStorage;
+#endif
 #endif
 
 #if SILVERLIGHT && !WindowsPhone
@@ -62,7 +64,7 @@ namespace Hammock.Web
         public virtual WebQueryResult Result { get; internal set; }
         public virtual object UserState { get; internal set; }
 
-#if SILVERLIGHT
+#if SILVERLIGHT || METRO
         public virtual bool HasElevatedPermissions { get; set; }
 
         // [DC]: Headers to use when access isn't direct
@@ -70,7 +72,7 @@ namespace Hammock.Web
         public virtual string SilverlightAcceptEncodingHeader { get; set; }        
 #endif
         
-#if !Silverlight
+#if !SILVERLIGHT && !PORTABLE
         public virtual ServicePoint ServicePoint { get; set; }
         public virtual bool KeepAlive { get; set; }
         public virtual bool FollowRedirects { get; internal set; }
@@ -149,7 +151,11 @@ namespace Hammock.Web
         private void ParseTransforms(out IEnumerable<PropertyInfo> properties, 
                                      out IDictionary<string, string> transforms)
         {
+#if !METRO
             properties = Info.GetType().GetProperties();
+#else
+            properties = Info.GetType().GetTypeInfo().DeclaredProperties;
+#endif
             transforms = new Dictionary<string, string>(0);
             Info.ParseValidationAttributes(properties, transforms);
         }
@@ -226,12 +232,12 @@ namespace Hammock.Web
         {
             Result.RequestDate = DateTime.UtcNow;
             Result.RequestUri = new Uri(e.Request);
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
             Result.RequestKeptAlive = KeepAlive;
 #endif
         }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         protected virtual void SetWebProxy(WebRequest request)
         {
 #if !Smartphone && !NETCF
@@ -280,7 +286,11 @@ namespace Hammock.Web
 
             // It should be possible to override the content type in the case of AddPostContent
             var hasContentType = Headers.AllKeys.Where(
+#if !METRO
                 key => key.Equals("Content-Type", StringComparison.InvariantCultureIgnoreCase)
+#else
+                key => key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase)
+#endif
                 ).Count() > 0;
             
             if(!hasContentType)
@@ -295,7 +305,7 @@ namespace Hammock.Web
 #endif
             content = BuildPostOrPutContent(request, post);
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
             request.ContentLength = content.Length;
 #endif
             return request;
@@ -347,7 +357,7 @@ namespace Hammock.Web
                 Trace.WriteLineIf(TraceEnabled, string.Concat("\r\n", entity));
 #endif
                 
-#if !SILVERLIGHT 
+#if !SILVERLIGHT && !PORTABLE 
                 // [DC]: This is set by Silverlight
                 request.ContentLength = content.Length;
 #endif
@@ -409,9 +419,11 @@ namespace Hammock.Web
         {
             if (!UserAgent.IsNullOrBlank())
             {
-#if SILVERLIGHT && !WindowsPhone
+#if (SILVERLIGHT && !WindowsPhone)
                 // [DC] User-Agent is still restricted in elevated mode
                 request.Headers[SilverlightUserAgentHeader ?? "X-User-Agent"] = UserAgent;
+#elif METRO
+                request.Headers["X-User-Agent"] = UserAgent;
 #else
                 if(request is HttpWebRequest)
                 {
@@ -430,7 +442,7 @@ namespace Hammock.Web
             AppendHeaders(request);
             AppendCookies(request);
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
             if (ServicePoint != null)
             {
 #if !Smartphone  && !NETCF
@@ -445,7 +457,7 @@ namespace Hammock.Web
             }
 #endif
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
             if (!Proxy.IsNullOrBlank())
             {
                 SetWebProxy(request);
@@ -463,7 +475,7 @@ namespace Hammock.Web
                 request.AutomaticDecompression = decompressionMethods;
 #else
 
-#if !WindowsPhone
+#if !WindowsPhone && !METRO
                 if (HasElevatedPermissions)
                 {
 #endif
@@ -498,10 +510,9 @@ namespace Hammock.Web
                     }
                 }
 #endif
-
-#endif
             }
-#if !SILVERLIGHT
+#endif
+#if !SILVERLIGHT && !PORTABLE
             if (RequestTimeout.HasValue)
             {
                 // [DC] Need to synchronize these as Timeout is ignored in async requests
@@ -543,7 +554,7 @@ namespace Hammock.Web
                     {
                         cookieContainer.Add(cookie.Domain, value);
                     }
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
                     else
                     {
                         request.CookieContainer.Add(value);
@@ -638,14 +649,14 @@ namespace Hammock.Web
 
         private static void AddHeader(KeyValuePair<string, string> header, WebRequest request)
         {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
             request.Headers.Add(header.Key, header.Value);
 #else
             request.Headers[header.Key] = header.Value;
 #endif
         }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         private readonly IDictionary<string, Action<HttpWebRequest, string>> _restrictedHeaderActions
             = new Dictionary<string, Action<HttpWebRequest, string>>(StringComparer.OrdinalIgnoreCase)
                   {
@@ -898,7 +909,7 @@ namespace Hammock.Web
             }
         }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         protected virtual void ExecuteGetDeleteHeadOptions(GetDeleteHeadOptions method, string url, string key, ICache cache, out WebException exception)
         {
             WebException ex = null;
@@ -1001,7 +1012,7 @@ namespace Hammock.Web
                 handler(this, args);
             }
         }
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         protected virtual void ExecuteGetDeleteHeadOptions(GetDeleteHeadOptions method, string url, out WebException exception)
         {
             WebResponse = null;
@@ -1094,7 +1105,7 @@ namespace Hammock.Web
         }
 #endif
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         protected virtual void ExecutePostOrPut(PostOrPut method, string url, out WebException exception)
         {
             WebResponse = null;
@@ -1266,7 +1277,7 @@ namespace Hammock.Web
                             }
 #endif
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
                             fs = parameter.FileStream ?? new FileStream(parameter.FilePath, FileMode.Open, FileAccess.Read);
 #else
                             if (parameter.FileStream == null)
@@ -1339,7 +1350,9 @@ namespace Hammock.Web
             if(write)
             {
                 requestStream.Flush();
+#if !METRO
                 requestStream.Close();
+#endif
                 if (fs != null)
                 {
                     fs.Dispose();
@@ -1349,7 +1362,7 @@ namespace Hammock.Web
             return written;
         }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         public virtual void Request(string url, out WebException exception)
         {
             switch (Method)
@@ -1758,7 +1771,7 @@ namespace Hammock.Web
         }
 #endif
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         public virtual void ExecutePostOrPut(PostOrPut method, 
                                                string url, 
                                                string key, 

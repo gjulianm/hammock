@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Hammock.Serialization
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class Utf8Serializer

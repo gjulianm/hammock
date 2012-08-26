@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using Hammock.Extensions;
 using Hammock.Web;
@@ -11,7 +10,7 @@ using Hammock.Security.Cryptography;
 
 namespace Hammock.Authentication.OAuth
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public static class OAuthTools
@@ -25,14 +24,14 @@ namespace Hammock.Authentication.OAuth
         private static readonly Random _random;
         private static readonly object _randomLock = new object();
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         private static readonly RandomNumberGenerator _rng =
             RandomNumberGenerator.Create();
 #endif
 
         static OAuthTools()
         {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
             var bytes = new byte[4];
             _rng.GetNonZeroBytes(bytes);
             _random = new Random(BitConverter.ToInt32(bytes, 0));
@@ -118,8 +117,8 @@ namespace Hammock.Authentication.OAuth
         {
             // [JD]: We need to escape the apostrophe as well or the signature will fail
             var original = value;
-            var ret = original.Where(
-                c => !Unreserved.Contains(c) && c != '%').Aggregate(
+            var ret = original.ToCharArray().Where(
+                c => Unreserved.IndexOf(c) == -1 && c != '%').Aggregate(
                     value, (current, c) => current.Replace(
                           c.ToString(), c.ToString().PercentEncode()
                           ));
@@ -293,7 +292,11 @@ namespace Hammock.Authentication.OAuth
             {
                 case OAuthSignatureMethod.HmacSha1:
                     {
+#if !PORTABLE
                         var crypto = new HMACSHA1();
+#else
+                        var crypto = HashAlgorithm.HMACSHA1Instance;
+#endif
                         var key = "{0}&{1}".FormatWith(consumerSecret, tokenSecret);
 
                         crypto.Key = _encoding.GetBytes(key);

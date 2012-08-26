@@ -6,13 +6,13 @@ using System.Dynamic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
-#if !NET20
+#if (!NET20 && !PORTABLE) || METRO
 using System.Xml.Linq;
 #endif
 
 namespace Hammock.Serialization
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class HammockDataContractSerializer : Utf8Serializer, ISerializer, IDeserializer
@@ -20,7 +20,7 @@ namespace Hammock.Serialization
         private readonly Dictionary<RuntimeTypeHandle, DataContractSerializer> _serializers =
             new Dictionary<RuntimeTypeHandle, DataContractSerializer>();
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         [NonSerialized]
 #endif
         private readonly XmlWriterSettings _settings;

@@ -4,7 +4,7 @@ using System.Net;
 
 namespace Hammock.Web.Mocks
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class MockHttpWebRequest : WebRequest
@@ -20,11 +20,11 @@ namespace Hammock.Web.Mocks
         
         public virtual string Content { get; set; }
 
-#if WindowsPhone 
+#if WindowsPhone || METRO
         public long ContentLength { get; set; }
 #elif !SILVERLIGHT
         public override long ContentLength { get; set; }
-#elif !WindowsPhone
+#elif !WindowsPhone 
         public long ContentLength { get; set; }
 #endif
         public override string ContentType { get; set; }
@@ -41,7 +41,7 @@ namespace Hammock.Web.Mocks
             ExpectHeaders = new WebHeaderCollection();
         }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         public override WebResponse GetResponse()
         {
             return CreateResponse();
@@ -69,7 +69,7 @@ namespace Hammock.Web.Mocks
             return response;
         }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         public override Stream GetRequestStream()
         {
             return new MemoryStream();
@@ -121,7 +121,7 @@ namespace Hammock.Web.Mocks
             get { return _requestUri; }
         }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         public override int Timeout
         {
             get

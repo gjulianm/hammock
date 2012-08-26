@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 
 namespace Hammock.Model
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
 #if !Smartphone && !NET20 && !ClientProfiles && !NETCF
@@ -14,7 +14,7 @@ namespace Hammock.Model
     {
         #region INotifyPropertyChanged Members
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         [field: NonSerialized]
 #endif
         public virtual event PropertyChangedEventHandler PropertyChanged;

@@ -2,12 +2,12 @@
 
 namespace Hammock
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public delegate void RestCallback(RestRequest request, RestResponse response, object userState);
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif     
     public delegate void RestCallback<T>(RestRequest request, RestResponse<T> response, object userState);

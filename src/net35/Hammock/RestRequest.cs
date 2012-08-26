@@ -10,7 +10,7 @@ using Hammock.Silverlight.Compat;
 
 namespace Hammock
 {
-#if !Silverlight
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class RestRequest : RestBase

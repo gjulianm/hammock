@@ -2,6 +2,7 @@
 
 namespace Hammock.Silverlight.Compat
 {
+#if !METRO
     [Flags]
     public enum DecompressionMethods
     {
@@ -9,4 +10,5 @@ namespace Hammock.Silverlight.Compat
         GZip = 4,
         None = 6
     }
+#endif
 }

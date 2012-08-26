@@ -14,7 +14,7 @@ using Hammock.Silverlight.Compat;
 
 namespace Hammock.Authentication.OAuth
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class OAuthWebQuery : WebQuery
@@ -51,7 +51,7 @@ namespace Hammock.Authentication.OAuth
         protected override byte[] BuildPostOrPutContent(WebRequest request, string post)
         {
             var content = PostProcessPostParameters(request, post.AsUri());
-#if TRACE
+#if TRACE && !METRO
             Trace.WriteLineIf(TraceEnabled, string.Concat("\r\n", content));            
 #endif
 			return content;
@@ -177,7 +177,7 @@ namespace Hammock.Authentication.OAuth
         {
             var uri = url.AsUri();
             url = uri.Scheme.Then("://")
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
                 .Then(uri.Authority);
 #else
                 .Then(uri.Host);
@@ -275,7 +275,7 @@ namespace Hammock.Authentication.OAuth
             return authorization;
         }
        
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         public override void Request(string url, IEnumerable<HttpPostParameter> parameters, out WebException exception)
         {
             RecalculateProtectedResourceSignature(url);

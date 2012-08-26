@@ -3,12 +3,12 @@ using System.Runtime.Serialization;
 
 namespace Hammock.Authentication.OAuth
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public enum OAuthParameterHandling
     {
-#if !SILVERLIGHT && !Smartphone && !ClientProfiles && !NET20 && !MonoTouch && !NETCF
+#if !SILVERLIGHT && !PORTABLE && !Smartphone && !ClientProfiles && !NET20 && !MonoTouch && !NETCF
         [EnumMember] HttpAuthorizationHeader,
         [EnumMember] UrlOrPostParameters
 #else
@@ -17,12 +17,12 @@ namespace Hammock.Authentication.OAuth
 #endif
     }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public enum OAuthSignatureTreatment
     {
-#if !SILVERLIGHT && !Smartphone && !ClientProfiles && !NET20 && !MonoTouch && !NETCF
+#if !SILVERLIGHT && !PORTABLE && !Smartphone && !ClientProfiles && !NET20 && !MonoTouch && !NETCF
         [EnumMember]
         Escaped,
         [EnumMember]

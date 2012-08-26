@@ -20,13 +20,13 @@ using Hammock.Web;
 using Hammock.Streaming;
 using Hammock.Web.Mocks;
 
-#if SILVERLIGHT
+#if SILVERLIGHT || METRO
 using Hammock.Silverlight.Compat;
 #endif
 
 namespace Hammock
 {
-#if !Silverlight
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class RestClient : RestBase, IRestClient
@@ -74,7 +74,7 @@ namespace Hammock
         public virtual string SilverlightUserAgentHeader { get; set;}
 #endif
 
-#if !Silverlight
+#if !SILVERLIGHT && !PORTABLE
         private bool _firstTry = true;
 #endif
         private int _remainingRetries;
@@ -85,7 +85,7 @@ namespace Hammock
 
         private readonly Dictionary<RestRequest, TimedTask> _tasks = new Dictionary<RestRequest, TimedTask>();
 
-#if !Silverlight
+#if !SILVERLIGHT && !PORTABLE
 
 #if NET40
         public RestResponse<dynamic> RequestDynamic(RestRequest request)
@@ -336,6 +336,7 @@ namespace Hammock
                 var t = del.Method.Invoke(func, null);
 #endif
 
+#if !METRO
                 // Invoke the retry predicate and pass the evaluator
                 var p = condition.GetValue("RetryIf");
                 var r = p.GetType().InvokeMember("Invoke",
@@ -343,6 +344,7 @@ namespace Hammock
                     null, p, new[] { t });
 
                 retry |= (bool)r;
+#endif
             }
 
             return retry;
@@ -560,7 +562,7 @@ namespace Hammock
             return encoding;
         }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         private bool GetFollowRedirects(RestBase request)
         {
             var redirects = request.FollowRedirects ?? FollowRedirects ?? false;
@@ -1116,7 +1118,7 @@ namespace Hammock
             var streamOptions = GetStreamOptions(request);
             if (streamOptions != null)
             {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
                 query.KeepAlive = true;
 #endif
                 var duration = streamOptions.Duration.HasValue
@@ -1233,7 +1235,7 @@ namespace Hammock
             var streamOptions = GetStreamOptions(request);
             if (streamOptions != null)
             {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
                 query.KeepAlive = true;
 #endif
 
@@ -1346,7 +1348,7 @@ namespace Hammock
             var streamOptions = GetStreamOptions(request);
             if (streamOptions != null)
             {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
                 query.KeepAlive = true;
 #endif
 
@@ -1457,7 +1459,7 @@ namespace Hammock
             var streamOptions = GetStreamOptions(request);
             if (streamOptions != null)
             {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
                 query.KeepAlive = true;
 #endif
                 var duration = streamOptions.Duration.HasValue
@@ -1532,7 +1534,7 @@ namespace Hammock
             var streamOptions = GetStreamOptions(request);
             if (streamOptions != null)
             {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
                 query.KeepAlive = true;
 #endif
 
@@ -2031,7 +2033,7 @@ namespace Hammock
             }
 
             TimedTask task;
-#if !NETCF
+#if !NETCF && ! METRO
             if (!taskOptions.GetType().IsGenericType)
             {
 #endif
@@ -2048,7 +2050,7 @@ namespace Hammock
                                                           userState
                                                           ));
 
-#if !NETCF
+#if !NETCF&& ! METRO
             }
             else
             {
@@ -2062,7 +2064,7 @@ namespace Hammock
             }
 #endif
 
-            RegisterTimedTaskForRequest(request, task);
+                RegisterTimedTaskForRequest(request, task);
 
             Action action = task.Start;
 
@@ -2094,7 +2096,7 @@ namespace Hammock
             }
 
             TimedTask task;
-#if !NETCF
+#if !NETCF && ! METRO
             if (!taskOptions.GetType().IsGenericType)
             {
 #endif
@@ -2109,7 +2111,7 @@ namespace Hammock
                                                                url,
                                                                true /* isInternal */,
                                                                userState));
-#if !NETCF
+#if !NETCF && ! METRO
             }
             else
             {
@@ -2123,7 +2125,7 @@ namespace Hammock
 
             }
 #endif
-            lock (_timedTasksLock)
+                lock (_timedTasksLock)
             {
                 _tasks[request] = task;
             }
@@ -2498,7 +2500,7 @@ namespace Hammock
                         // [DC] WebResponse could be null, i.e. when streaming
                         return response;
                     }
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
                     response.Headers = result.WebResponse.Headers;
 #else
                     response.Headers = new NameValueCollection();
@@ -2508,7 +2510,7 @@ namespace Hammock
                     }
 #endif
 
-#if !SILVERLIGHT && !NETCF
+#if !SILVERLIGHT && !PORTABLE && !NETCF
                     if(result.WebResponse is HttpWebResponse)
                     {
 
@@ -2627,7 +2629,7 @@ namespace Hammock
             query.PostContent = GetPostContent(request);
             query.Encoding = GetEncoding(request);
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
             query.FollowRedirects = GetFollowRedirects(request);
 #endif
             query.Entity = SerializeEntityBody(request);

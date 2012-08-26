@@ -7,7 +7,7 @@ using Hammock.Silverlight.Compat;
 
 namespace Hammock.Authentication.OAuth
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class OAuthCredentials : IWebCredentials

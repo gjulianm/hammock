@@ -4,7 +4,7 @@ using System.Net;
 
 namespace Hammock.Web
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class WebQueryResult

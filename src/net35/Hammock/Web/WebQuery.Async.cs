@@ -200,7 +200,7 @@ namespace Hammock.Web
                 this.timer = new Timer(TimerTimedOut, state, timeout, Timeout.Infinite);
 #endif
 
-#if !Smartphone && !WindowsPhone && !SL4 && !NETCF
+#if !Smartphone && !WindowsPhone && !SL4 && !NETCF && !METRO
             // [DC] request.Timeout is ignored with async
             
             var isPost = result is WebQueryAsyncResult;
@@ -275,7 +275,7 @@ namespace Hammock.Web
                         TimedOut = true,
                         StatusCode = 0
                     };
-#if TRACE
+#if TRACE && !METRO
                     // Just for cosmetic purposes
                     Trace.WriteLineIf(TraceEnabled, string.Concat("RESPONSE: ", response.StatusCode));
                     Trace.WriteLineIf(TraceEnabled, "\r\n");
@@ -515,7 +515,9 @@ namespace Hammock.Web
             {
                 if (stream != null)
                 {
+#if !METRO
                     stream.Close();
+#endif
                     stream.Dispose();
                 }
 
@@ -676,7 +678,9 @@ namespace Hammock.Web
                     stream.Write(content, 0, content.Length);
                     stream.Flush();
                 }
+#if !METRO
                 stream.Close();
+#endif
 
                 request.BeginGetResponse(AsyncStreamCallback,
                                          new Pair<WebRequest, Pair<TimeSpan, int>>
@@ -825,8 +829,10 @@ namespace Hammock.Web
                 stream.Write(post, 0, post.Length);
                 stream.Flush();
             }
+#if !METRO
             stream.Close();
-#if TRACE
+#endif
+#if TRACE && !METRO
             var encoding = Encoding ?? new UTF8Encoding();
             if (post != null)
             {
@@ -1330,7 +1336,7 @@ namespace Hammock.Web
                 return null;
             }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
             version = string.Concat("HTTP/", httpWebResponse.ProtocolVersion);
 #else
             version = "HTTP/1.1";

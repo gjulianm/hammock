@@ -4,7 +4,7 @@ using Hammock.Web;
 
 namespace Hammock.Authentication.Basic
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class BasicAuthCredentials : IWebCredentials

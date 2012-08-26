@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Hammock.Web
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class WebQueryAsyncResult : IAsyncResult, IDisposable
@@ -16,7 +16,7 @@ namespace Hammock.Web
         public virtual IAsyncResult InnerResult { get; set; }
         public virtual object Tag { get; set; }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         [NonSerialized]
 #endif
         private AutoResetEvent _block;

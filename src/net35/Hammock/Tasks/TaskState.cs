@@ -2,7 +2,7 @@
 
 namespace Hammock.Tasks
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class TaskState : IRetryState

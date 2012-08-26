@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Hammock.Attributes.Specialized
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]

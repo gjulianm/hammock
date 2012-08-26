@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using Hammock.Extensions;
 
-#if SILVERLIGHT
+#if SILVERLIGHT || PORTABLE || METRO
 using Hammock.Silverlight.Compat;
 #else
 using System.Collections.Specialized;
@@ -11,7 +11,7 @@ using System.Collections.Specialized;
 
 namespace Hammock
 {
-#if !Silverlight
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class RestResponseBase : IDisposable
@@ -156,7 +156,9 @@ namespace Hammock
 
             if (ContentStream != null)
             {
+#if !PORTABLE
                 ContentStream.Close();
+#endif
                 ContentStream.Dispose();
             }
 
@@ -177,17 +179,36 @@ namespace Hammock
                 _stream = stream;
             }
 
+#if !METRO
             public override IAsyncResult BeginRead(byte[] buffer, int offset, int count,
                                                    AsyncCallback callback, object state)
             {
                 return _stream.BeginRead(buffer, offset, count, callback, state);
             }
+#else
 
+            public async void BeginRead(byte[] buffer, int offset, int count,
+                                                   AsyncCallback callback, object state)
+            {
+                await _stream.ReadAsync(buffer, offset, count);
+                callback(new AwaitAsyncResult(state));
+            }
+#endif
+
+#if !METRO
             public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count,
                                                     AsyncCallback callback, object state)
             {
                 return _stream.BeginWrite(buffer, offset, count, callback, state);
             }
+#else
+            public async void BeginWrite(byte[] buffer, int offset, int count,
+                                                    AsyncCallback callback, object state)
+            {
+                await _stream.WriteAsync(buffer, offset, count);
+                callback(new AwaitAsyncResult(state));
+            }
+#endif
 
             public override bool CanRead
             {
@@ -204,11 +225,19 @@ namespace Hammock
                 get { return _stream.CanWrite; }
             }
 
+#if !METRO
             public override void Close()
             {
                 _stream.Flush();
             }
+#else
+            public void Close()
+            {
+                _stream.Flush();
+            }
+#endif
 
+#if !METRO
             public override int EndRead(IAsyncResult asyncResult)
             {
                 return _stream.EndRead(asyncResult);
@@ -218,6 +247,7 @@ namespace Hammock
             {
                 _stream.EndWrite(asyncResult);
             }
+#endif
 
             public override void Flush()
             {
@@ -298,7 +328,7 @@ namespace Hammock
         }
     }
 
-#if !Silverlight
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class RestResponse : RestResponseBase
@@ -306,7 +336,7 @@ namespace Hammock
         public virtual object ContentEntity { get; set; }
     }
 
-#if !Silverlight
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class RestResponse<T> : RestResponseBase

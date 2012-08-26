@@ -7,6 +7,7 @@ using ICSharpCode.SharpZipLib.Silverlight.Zip;
 
 namespace Hammock.Silverlight.Compat
 {
+#if !METRO
     public class GzipHttpWebResponse : HttpWebResponse
     {
         private const int ChunkSize = 2048;
@@ -28,15 +29,18 @@ namespace Hammock.Silverlight.Compat
             get { return _response.StatusDescription; }
         }
 
+
         public GzipHttpWebResponse(HttpWebResponse response)
         {
             _response = response;
         }
-
         public override void Close()
         {
+
             _response.Close();
+
         }
+
 
         public override Stream GetResponseStream()
         {
@@ -131,4 +135,6 @@ namespace Hammock.Silverlight.Compat
             get { return _response.ResponseUri; }
         }
     }
+#endif
 }
+

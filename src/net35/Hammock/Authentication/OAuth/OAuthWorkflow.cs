@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Hammock.Extensions;
 using Hammock.Web;
-#if !SILVERLIGHT && !MonoTouch &&!NETCF
+#if !SILVERLIGHT && !PORTABLE && !MonoTouch &&!NETCF
 using System.Web;
 #endif
 
@@ -255,13 +255,13 @@ namespace Hammock.Authentication.OAuth
 
             // Include url parameters in query pool
             var uri = new Uri(url);
-#if !SILVERLIGHT && !MonoTouch
+#if !SILVERLIGHT && !PORTABLE && !MonoTouch
             var urlParameters = System.Compat.Web.HttpUtility.ParseQueryString(uri.Query);
 #else
             var urlParameters = uri.Query.ParseQueryString();
 #endif
 
-#if !SILVERLIGHT && !MonoTouch
+#if !SILVERLIGHT && !PORTABLE && !MonoTouch
             foreach (var parameter in urlParameters.AllKeys)
 #else
             foreach (var parameter in urlParameters.Keys)

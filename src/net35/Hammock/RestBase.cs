@@ -13,7 +13,7 @@ using Hammock.Tasks;
 using Hammock.Web;
 using Hammock.Streaming;
 
-#if SILVERLIGHT
+#if SILVERLIGHT || PORTABLE
 using Hammock.Silverlight.Compat;
 #else
 using System.Collections.Specialized;
@@ -21,7 +21,7 @@ using System.Collections.Specialized;
 
 namespace Hammock
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public enum QueryHandling
@@ -38,7 +38,7 @@ namespace Hammock
         AppendToParameters
     }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public abstract class RestBase : PropertyChangedBase
@@ -101,7 +101,7 @@ namespace Hammock
             PostParameters = new List<HttpPostParameter>(0);
         }
 
-#if !Silverlight
+#if !SILVERLIGHT && !PORTABLE
         public virtual ServicePoint ServicePoint { get; set; }
         public virtual bool? FollowRedirects { get; set; }
 #endif

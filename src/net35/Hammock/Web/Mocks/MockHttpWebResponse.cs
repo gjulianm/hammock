@@ -6,7 +6,7 @@ using Hammock.Extensions;
 
 namespace Hammock.Web.Mocks
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class MockHttpWebResponse : WebResponse
@@ -20,7 +20,7 @@ namespace Hammock.Web.Mocks
 
         protected internal WebHeaderCollection MockHeaders { get; set; } 
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
         public override System.Net.WebHeaderCollection Headers
         {
             get
@@ -46,11 +46,12 @@ namespace Hammock.Web.Mocks
             stream.Seek(0, SeekOrigin.Begin);
             return stream;
         }
-
+#if !METRO
         public override void Close()
         {
             
         }
+#endif
 
         public override long ContentLength
         {

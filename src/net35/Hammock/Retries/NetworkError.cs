@@ -3,7 +3,7 @@ using System.Net;
 
 namespace Hammock.Retries
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class NetworkError : RetryErrorCondition
@@ -17,7 +17,7 @@ namespace Hammock.Retries
                                var we = (e as WebException);
 
                                return we != null && (we.Status != WebExceptionStatus.Success &&
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
                                       we.Status != WebExceptionStatus.ProtocolError &&
 #endif
                                       we.Status != WebExceptionStatus.Pending);

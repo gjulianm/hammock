@@ -2,7 +2,7 @@ using System;
 
 namespace Hammock.Tasks
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class RateLimitingRule<T> : IRateLimitingRule<T>

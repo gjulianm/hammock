@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
 using System.Collections.Specialized;
 #else
 using Hammock.Silverlight.Compat;

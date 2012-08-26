@@ -5,7 +5,7 @@ using Hammock.Validation;
 
 namespace Hammock.Attributes.Validation
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class SpecificationAttribute : ValidationAttribute

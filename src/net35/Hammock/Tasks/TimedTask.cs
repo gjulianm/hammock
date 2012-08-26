@@ -2,8 +2,9 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using Hammock.Web;
+using Windows.UI.Xaml;
 
-#if SILVERLIGHT
+#if SILVERLIGHT || METRO
 using Hammock.Silverlight.Compat;
 #endif
 namespace Hammock.Tasks
@@ -142,7 +143,7 @@ namespace Hammock.Tasks
         }
     }
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class TimedTask<T> : TimedTask, ITimedTask<T>
@@ -174,18 +175,18 @@ namespace Hammock.Tasks
                     {
                         try
                         {
-#if TRACE
+#if TRACE && !METRO
                             Trace.WriteLine("Running a periodic task");
 #endif
                             var skip = RateLimitingRule.ShouldSkipForRateLimiting();
-#if TRACE
+#if TRACE && !METRO
                             Trace.WriteLine(string.Format("{0} Evaluated rate limiting predicate and result was {1}",
                                                           DateTime.Now.ToShortTimeString(),
                                                           skip ? "'skip'" : "'don't skip'"));
 #endif
                             Action(skip);
                             var newInterval = RateLimitingRule.CalculateNewInterval();
-#if TRACE
+#if TRACE && !METRO
                             Trace.WriteLine(string.Format("{0} Calculated new interval for throttled task and result was: {1}",
                                                           DateTime.Now.ToShortTimeString(),
                                                           newInterval.HasValue ? newInterval.Value.ToString() : "'no change'"));
@@ -208,7 +209,7 @@ namespace Hammock.Tasks
                     }
                     else
                     {
-#if TRACE
+#if TRACE && !METRO
                         Trace.WriteLine("Skipping recurring task because the previous iteration is still active");
 #endif
                         Action(true);

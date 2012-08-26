@@ -8,7 +8,7 @@ using System.Runtime.Serialization.Json;
 
 namespace Hammock.Serialization
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class HammockDataContractJsonSerializer : Utf8Serializer, ISerializer, IDeserializer

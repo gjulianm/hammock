@@ -2,7 +2,7 @@ using System;
 
 namespace Hammock.Authentication.OAuth
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public class OAuthToken

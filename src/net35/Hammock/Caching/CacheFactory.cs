@@ -2,12 +2,12 @@ using System;
 
 namespace Hammock.Caching
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public static class CacheFactory
     {
-#if !Smartphone && !Silverlight && !ClientProfiles && !MonoTouch && !NETCF
+#if !Smartphone && !Silverlight && !ClientProfiles && !MonoTouch && !NETCF && !PORTABLE
         public static IDependencyCache AspNetCache
         {
             get { return new AspNetCache(); }

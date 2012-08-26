@@ -1,6 +1,6 @@
 using System;
 using Hammock.Specifications;
-
+using System.Reflection;
 namespace Hammock.Extensions
 {
     internal static class SpecificationExtensions
@@ -16,7 +16,11 @@ namespace Hammock.Extensions
                 return false;
             }
 
+#if !METRO
             var method = type.GetMethod("IsSatisfiedBy");
+#else
+            var method = type.GetTypeInfo().GetDeclaredMethod("IsSatisfiedBy");
+#endif
             var result = method.Invoke(marker, new[] {instance});
 
             return (bool) result;
@@ -32,7 +36,11 @@ namespace Hammock.Extensions
                 return false;
             }
 
+#if !METRO
             var method = type.GetMethod("IsSatisfiedBy");
+#else
+            var method = type.GetTypeInfo().GetDeclaredMethod("IsSatisfiedBy");
+#endif
             var result = method.Invoke(specificationType, new[] {instance});
 
             return (bool) result;

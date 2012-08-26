@@ -3,7 +3,7 @@ using Hammock.Web;
 
 namespace Hammock.Retries
 {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PORTABLE
     [Serializable]
 #endif
     public abstract class RetryResultCondition : IRetryCondition<WebQueryResult>
