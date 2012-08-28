@@ -4,6 +4,10 @@ using System.Text;
 using Hammock.Extensions;
 using Hammock.Web;
 
+#if !METRO
+using System.Security.Cryptography;
+#endif
+
 #if NETCF
 using Hammock.Security.Cryptography;
 #endif

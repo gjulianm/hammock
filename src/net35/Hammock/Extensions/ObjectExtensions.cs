@@ -25,7 +25,11 @@ namespace Hammock.Extensions
 
         private static bool ImplementsGeneric(this Type type, Type targetType)
         {
+#if METRO
             var interfaceTypes = type.GetTypeInfo().ImplementedInterfaces;
+#else
+            var interfaceTypes = type.GetInterfaces();
+#endif
             foreach (var interfaceType in interfaceTypes)
             {
 #if METRO
@@ -46,7 +50,7 @@ namespace Hammock.Extensions
 #if METRO
             var baseType = type.GetTypeInfo().BaseType;
 #else
-            var baseType = type.BaseType
+            var baseType = type.BaseType;
 #endif
             if (baseType == null)
             {

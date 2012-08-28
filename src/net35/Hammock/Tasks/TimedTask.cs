@@ -2,7 +2,9 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using Hammock.Web;
+#if METRO
 using Windows.UI.Xaml;
+#endif
 
 #if SILVERLIGHT || METRO
 using Hammock.Silverlight.Compat;

@@ -2,6 +2,8 @@ using System;
 using System.Text;
 using Hammock.Authentication.OAuth;
 using Hammock;
+using System.Security.Cryptography;
+
 namespace Hammock.Extensions
 {
     internal static class OAuthExtensions
