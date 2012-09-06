@@ -36,3 +36,7 @@ publish.xml
 TestResults
 src/net40/Hammock.Tests/app.config
 $SSH_ENV
+Backup/
+UpgradeReport*
+UpgradeLog*
+
