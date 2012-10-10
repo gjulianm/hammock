@@ -1459,6 +1459,8 @@ namespace Hammock
             {
 #if !SILVERLIGHT
                 query.KeepAlive = true;
+#else
+                query.Headers.Add("Connection", "Keep-Alive");
 #endif
                 var duration = streamOptions.Duration.HasValue
                                    ? streamOptions.Duration.Value
@@ -1534,6 +1536,8 @@ namespace Hammock
             {
 #if !SILVERLIGHT
                 query.KeepAlive = true;
+#else
+                query.Headers.Add("Connection", "Keep-Alive");
 #endif
 
                 var duration = streamOptions.Duration.HasValue
