@@ -89,7 +89,7 @@ namespace Hammock.Silverlight.Compat
         // [DC]: We have to read the entire stream in as HTTP response streams are read-once
         private static MemoryStream ReadIntoMemoryStream(Stream stream, out byte[] marker)
         {
-            var buffer = new byte[8192];
+            var buffer = new byte[1024];
             var ms = new MemoryStream();
 
             // Modified by gjulianm. Don't ask. I don't understand it either, but buffer can be nulll.

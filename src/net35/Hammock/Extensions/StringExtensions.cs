@@ -84,7 +84,7 @@ namespace Hammock.Extensions
             foreach (var b in bytes)
             {
                 // [DC]: Support proper encoding of special characters (\n\r\t\b)
-                if((b > 7 && b < 11) || b == 13)
+                if ((b > 7 && b < 11) || b == 13)
                 {
                     sb.Append(string.Format("%0{0:X}", b));
                 }
@@ -100,39 +100,41 @@ namespace Hammock.Extensions
         {
             // [DC]: This method does not URL decode, and cannot handle decoded input
             if (query.StartsWith("?")) query = query.Substring(1);
-            
-            if(query.Equals(string.Empty))
+
+            if (query.Equals(string.Empty))
             {
                 return new Dictionary<string, string>();
             }
 
             var parts = query.Split(new[] { '&' });
-            
-            return parts.Select(
+
+            var l = parts.Select(
                 part => part.Split(new[] { '=' })).ToDictionary(
                     pair => pair[0], pair => pair[1]
                 );
+            l.Count();
+            return l;
         }
 
         public static bool TryParse(this string value, out double number)
         {
-          try
-          {
-            number = double.Parse(value);
-            return true;
-          }
-          catch
-          {
-            number =  0;
-            return false;
-          }
+            try
+            {
+                number = double.Parse(value);
+                return true;
+            }
+            catch
+            {
+                number = 0;
+                return false;
+            }
         }
 
         private const RegexOptions Options =
 #if !SILVERLIGHT && !MonoTouch
             RegexOptions.Compiled | RegexOptions.IgnoreCase;
 #else
-            RegexOptions.IgnoreCase;
+ RegexOptions.IgnoreCase;
 #endif
     }
 }
